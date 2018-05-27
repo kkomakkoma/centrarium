@@ -3,7 +3,7 @@ layout: post
 title:  "Chapter 5"
 date:   2018-05-27 14:35:48
 author: me
-categories: 회귀분석
+categories: Dummy
 use_math: true
 ---
 
