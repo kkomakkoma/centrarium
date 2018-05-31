@@ -199,3 +199,6 @@ navigation:
    url: /category
  - title: Contact
    url: /contact
+
+category_dir: category/
+tag_dir: tag/
