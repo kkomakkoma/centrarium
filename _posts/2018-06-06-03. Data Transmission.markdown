@@ -1,0 +1,242 @@
+---
+layout: post
+title:  "03. Data Transmission"
+date:   2018-06-06 23:42:36
+author: me
+categories: Jekyll
+tags:	network
+cover:  "/assets/instacode.png"
+---
+
+## Ⅲ. Data Transmission
+통신은 송신기와 수신기 사이에 있는 매체에 의해 이루어진다.
+
+**① 유선매체**: 파동이 물리적 경로를 따라 이동된다. (twisted pair, coaxial cable, optical fiber)
+**② 무선매체**: 전자파를 전송하는 수단을 제공 (물, 공기, 진공)
+
+
+**① direct link**: 중간 장치 없이 송신기로부 수신기로 신호가 직접 전파되는 것. (증폭기나 중계기는 예외)
+**② point-to-point**: 직접 연결, 2개의 디바이스만 링크를 공유
+**③ multi-point**: 2개 이상의 디바이스가 링크를 공유
+
+**① simplex**: 단방향 (하나는 송신만, 하나는 수신만 / TV)
+**② half duplex**: 한번에 한방향만 (무전기)
+**③ full duplex**: 동시에 양방향 가능 (전화기)
+simplex가 half duplex를 의미할 때도 있고, duplex가 full duplex를 의미할 때도 있다.
+
+### 1. Frequency, Spectrum, Bandwidth
+#####(1) 시간 도매인
+신호 = f(주파수)
+
+$$
+\sum_{i=0}^n i^2 = \frac{(n^2+n)(2n+1)}{6}
+$$
+
+######① analog signal
+
+######② digital signal
+
+######③ periodic signal
+
+######④ aperiodic signal
+
+
+각 비트의 의미
+특정 패턴은 어떻게 해석되며, 그 해석에 따라 어떤 동작을 취하는가
+제어 비트의 의미 (eg. 13번째 bit를 1로 보낸다는 simultaneous binding을 의미한다.)
+######③ timing: 속도 맞추기, sequencing
+언제, 어느 속도로 데이터를 전송할 것인가?
+송신기가 100Mbps로 데이터를 전송하고, 수신기가 1Mbps로 데이터를 처리한다고 했을 때, 수신기가 감당할 수 없을 정도로 데이터가 전송되어 대부분의 데이터는 유실될 것이다.
+
+#####(2) TCP/IP 프로토콜 구조
+일반적으로 통신은 application, computer, network 이 세 주체가 참여한다. application은 computer에서 실행되고, computer는 network를 통해 연결되어 있다. data는 network를 통해 전송된다.
+######① Physical Layer
+데이터 전송 기기(컴퓨터)와 네트워크 사이의 물리적 인터페이스를 담당.
+
+전송 매체의 특성(유선, 무선), 신호 레벨, data rate와 관련된 것들을 구체화 한다.
+
+######② Network Access Layer
+end system과 네트워크 사이에서 데이터를 교환.
+송신 컴퓨터는 네트워크에서 제공할 수 있는 priority와 같은 특정 서비스를 호출할 수 있다.
+이 layer에서 사용되는 소프트웨어는 사용하는 네트워크의 종류에 따라 달라진다. (circuit switching, packet switching, LAN 등에 따라 다른 표준들이 개발되었다)
+48 비트 mac address(media access control) 기반의 통신
+상위 IP주소와 상호변환을 위해 ARP/RARP 프로토콜 사용
+
+**network interface card**: 컴퓨터와 네트워크 선로를 연결하는 관문역할.
+PC 또는 네트워크에서 전달받는 정보를 상호교환할 수 있도록 함.
+PC에서 전송요구가 발생하면, NIC로 정보를 일정한 형태로 만들어 보내고, NIC에서는 이 정보를 버퍼에 저장한 다음, 네트워크에 맞는 형태로 보낸다.
+컴퓨터가 발송하려는 신호(이진수)를 받아 이것을 전기적 신호(1이면 전압 올리고, 0이면 전압 내리고)로 발생시켜 연결된 선으로 신호를 보낸다.(전기가 강하게 흘렀다가 약하가 흘렀다가)
+받는 쪽 NIC도 그 선에서 물려서 전압을 측정하고 있으면, 어떤 식으로 신호가 오는지 판독해서 이를 컴퓨터 내부로 전달.
+네트워크는 NIC에 네트워크 종류를 알려주고, NIC는 자체 버퍼에 넣어둔 정보를 네트워크 토폴로지에 적합하게 정보를 전송한다.
+
+- 네트워크 드라이버: PC와 NIC를 논리적으로 묶어주는 소프트웨어
+- packet driver: 직접 NIC를 제어.
+- NOS(Network Operation System): 간접적으로 NIC를 제어.
+
+패킷을 전기 신호로 변환하여 보내고, 들어오는 신호는 패킷으로 변환한다.
+물리주소가 자신의 물리주소와 맞는지 확인한다.
+전송될 데이터를 병렬에서 직렬로 변환.
+빠른 전송을 위해 데이터 코딩, 압축
+수신기의 NIC는 데이터를 받아서 CPU로 전달한다.
+
+**mac address**: 사람 이름처럼 네트워크 카드마다 붙는 고유 이름.
+12개의 16진수로 구성됨. 2개의 16진수를 묶어서 octet이라고 부른다.
+mac address는 6 octets이고, 48 bit이다.
+
+**ARP(Address Resolution Protocol)**
+통신을 하려면 IP외에 MAC 주소도 같이 알아야 한다.
+ARP는 IP를 알고 있는 상태에서 mac 주소를 알아내는 과정이다.
+논리적인 IP주소를 물리적인 mac주소로 바꾸어 주는 역할을 하는 주소 해석 프로토콜이다.
+
+**RARP(Reverse Address Resolution Protocol)**
+하드웨어 주소(mac 주소)를 IP주소로 매핑
+
+
+######③ Internet Layer
+packet의 캡슐화: segment에 routing을 위한 IP헤더를 포함시킨다.(소스경로, 목적지 경로 등이 포함됨)
+네트워크 상의 패킷을 전송, 제어
+IP: 패킷 전달 서비스 제공. 인터넷에 연결되어 있는 모든 컴퓨터들이 논리적으로 갖게 되는 고유 주소.
+IP의 기능: routing
+이 프로토콜은 end system뿐만 아니라 router에도 쓰인다.
+
+**routing**: source부터 destination까지 패킷을 보내기 위한 가장 좋은 경로 찾기.
+router는 두 네트워크를 연결하고, 데이터를 전송한다.
+각 패킷은 목적지까지 다른 경로를 거쳐서 전송됨. 그 후 다시 모여서 원래 순서대로 재결합한다.
+비연결형 서비스
+
+**ICMP(Internet Control Message Protocol)**
+TCP/IP에서 IP패킷을 처리할 때 발생하는 문제를 알리거나, 진단과 같이 IP계층에서 필요한 기타 기능들을 수행하기 위한 프로토콜
+
+**IGMP(Internet Group Management Protocol)**
+서브 네트워크 상에서 라우터, 호스트들이 어떤 멀티캐스트 그룹에 속하는가를 알기 위한 일종의 그룹 관리용 신호 프로토콜
+
+######④ Transport Layer
+모든 application이 공유하는 공통된 layer의 메커니즘을 수집하여 안정적으로 데이터가 전달될 수 있도록 한다.
+통신 연결을 시작, 유지, 종료하는 역할
+application의 특징과는 상관없이 데이터는 destination application에 확실히 도달하고, 보낸 것과 같은 순서로 도달한다는 것을 보장하면서 안정적으로 교환되어야 한다.
+reliability: 애플리케이션의 특징과는 관계없이, 모든 애플리케이션에서 필요한 공통적인 매커니즘.
+데이터를 segment로 분할한다.
+
+######⑤ Application Layer
+사용자 애플리케이션을 지원
+각 애플리케이션 종류마다 별도의 모듈이 필요하다.
+다양한 사용자 애플리케이션을 지원하기 위해 필요한 로직을 포함한다.
+
+#####(3) Operation of TCP/IP
+network access protocol은 컴퓨터를 네트워크에 연결하는데 사용된다. 이 프로토콜은 host가 데이터를 subnetwork를 거쳐 또 다른 host로 전송할 수 있도록 한다. 또는 수신하는 host가 다른 subnetwork에 있으면 데이터를 내보낼 router로 전송할 수 있도록 한다.
+
+IP는 모든 end system, router에서 실행될 수 있도록 한다.  데이터블록을 한 host에서 하나 이상의 router를 거쳐 또 다른 host로 전달하는 것처럼 작동한다.
+
+TCP는 end system에서만 실행된다. 모은 데이터가 올바른 application에 안정적으로 전송될 수 있도록 보장하기 위해 데이터 블록들을 추적한다. 
+
+![operation of TCP/IP](/_posts/data communication/operation_of_TCP_IP.png)
+데이터를 전송할 때 user data와 control information(header)이 필요하다.
+
+송신측에서는 데이터 블록을 생성하고, 이를 TCP로 넘긴다.
+
+TCP는 이 블록을 다루기 쉽게 더 작은 조각으로 쪼개고, 각 조각마다 TCP header(control information)을 붙인다. => TCP segment가 생긴다.
+
+TCP는 각 segment를 IP로 넘긴다. 이 segment들은 하나 이상의 subnetwork를 통해 전송되고, 하나 이상의 중간 router를 통해 relay된다.
+이 과정에서도 control information을 사용해야 한다. IP는 각 segment에 controll information(header)를 붙여서 IP datagram을 만든다.
+
+IP datagram을 network access layer로 보낸다. network access layer는 자신의 header를 붙여서 packet 또는 frame을 만든다. 이 패킷을 subnetwork를 거쳐 목적지에 도착한다.
+
+- sequencing (순서제어)
+전송되는 블록에 전송 순서를 부여 -> flow control, error control을 쉽게 한다.
+
+- flow control (흐름제어)
+수신 측에서 데이터가 흘러 넘치지 않도록 수신 측의 처리 능력에 따라 송신 측에서 송신하는 데이터 양을 조절한다.
+수신 측의 버퍼 메모리가 흘러 넘쳐서 데이터가 손실되는 것을 방지하기 위한 것.
+
+- error control (오류제어)
+전송 도중 발생하는 오류를 검출하고, 정정한다. 
+-> 데이터나 제어 정보의 파손에 대비한다.
+통신 회로의 잡음, 노드의 기억장치에서 접속장치로 전달되는 과정, 하드웨어의 고장, 소프트웨어 문제 등으로 인해 통신에 문제가 생기는 경우가 있는데, 이를 해결하기 위해 필요한 기능이 오류제어이다.
+
+- addressing (주소지정)
+데이터가 목적지까지 정확히 전송될 수 있도록 목적지의 이름, 주소, 경로를 부여한다.
+수신주소: 데이터 경로, 데이터 전달을 위한 정보
+발신주소: 수신 측이 어디서 데이터가 전송된 건지 식별할 수 있도록
+논리적 주소를 사용하면, 송신 측은 수신측의 실제 주소를 알 필요가 없고, 통신 요소(entity)들을 주소의 변경없이 재배치할 수 있다.
+
+- fragmentation (단편화)
+송신 측에서 전송할 데이터를 전송에 알맞은 크기의 작은 블록으로 자르는 작업
+지체현상을 막기 위해 패킷의 크기는 되도록 짧게.
+패킷의 길이가 길어질수록 내부 기억 장치의 단편화 현상으로 자원의 낭비가 발생 + 수신 지점에 도착했을 때, 오류 발생 가능성이 높음 -> 재전송의 확률도 높아짐.
+하지만 패킷의 길이가 너무 짧으면, 고정된 패킷 크기와 버퍼 제어 정보로 인해 기억장치의 효율이 떨어질 수 있다.
+
+- reassembly (재조립)
+수신 측에서 단편화된 블록을 원래의 데이터로 다시 조립하는 것.
+
+######① TCP header
+![TCP header](/_posts/data communication/TCP_header.png)
+
+최소 20 octets (160 bits)
+
+source port, destination port: 연결 중인 source와 destination system에 있는 application을 식별한다.
+
+sequence number, acknowledge number, window: flow control, error control을 제공한다.
+
+sequence number
+전송되는 블록에 전송 순서를 부여한다.
+-> 신뢰성, flow control 기능 제공.
+TCP segmnet의 첫번째 바이트에 부여되는 번호
+
+acknowledge number
+다음에 수신할 바이트 번호 (마지막으로 수신을 받은 순서번호 + 1)
+
+header length: TCP header 길이를 4 bytes(32 bits) 단위로 표시한다.
+
+checksum: TCP segment에서 발생한 에러를 감지하는데 쓰이는 16 bits frame check sequence.
+
+######② UDP header
+![UDP header](/_posts/data communication/UDP_header.png)
+전송이 제대로 됐는지, 순서가 올바른지, 중복된 것은 없는지 등을 보장하지 않는다.
+
+최소한의 프로토콜로 전송할 수 있다.
+
+checksum: 데이터에 에러가 없는지 체크한다. (optional)
+
+######③ IPv4 header 
+![IPv4 header](/_posts/data communication/IPv4_header.jpg)
+최소 20 octets (160 bits)
+
+datagram = segment(transport layer) + IP header
+
+checksum: 헤더 내의 에러를 감지한다.
+
+protocol: IP를 사용하는 상위 계층 프로토콜을 알아낸다.
+
+32비트 주소를 명시한다.
+
+Identification, flags, fragment offst: fragmentation, reassembly에 쓰인다.
+
+######④ IPv6 header 
+![IPv6 header](/_posts/data communication/IPv6_header.jpg)
+기존의 IPv4보다 성능이 향상되었다. -> 속도향상, data stream의 혼합 (그래픽, 비디오)
+
+IPv6이 진짜 필요해진 이유는 더 많은 주소가 필요하게 되었기 때문이다.
+
+128 bits 주소를 사용한다.
+
+######⑤ TCP/IP Application
+SMTP (Simplified Mail Transfer Protocol): 전자메일
+메시지 작성 방법을 지정하지 않음.
+수신 SMTP 모듈은 오는 메시지를 user의 메일박스에 저장한다.
+
+FTP (File Transfer Protocol): 파일 전송
+test, binaary file 둘다 가능.
+control message를 교환하기위해 target system과 TCP 연결을 설정한다.
+파일 전송이 허용되면, 두번째 TCP data연결이 이루어진다. applciation level에서는 header나 control information의 오버헤드가 없다.
+파일 전송이 끝나면, control connection이 완료되었음을 알리고, 새로운 파일 전송명령을 받는다.
+
+Telnet: 원격 로그온
+터미널이나 PC 사용자가 장거리 컴퓨터, 기능에 로그온할 수 있도록 한다. (원격 컴퓨터에 직접 연결되어 있는 것처럼 보인다.)
+간단한 스크롤 모드 터미널에서 작동하도록 만들어졌다.
+클라이언트와 서버 텔넷 간의 터미널 트래픽은 TCP 연결을 통해 이루어진다.
+
+#####(4) OSI (Open Systems Interconnection)
+![OSI1](/_posts/data communication/OSI1.png)
+![OSI2](/_posts/data communication/OSI2.png)
+
+
